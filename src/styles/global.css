@@ -1,0 +1,456 @@
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    /* 全站直角：任何圆角一律归零 */
+    border-radius: 0 !important;
+    box-sizing: border-box;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scrollbar-color: var(--accent) var(--bg-2);
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: 15px;
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.02em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  input,
+  select {
+    font: inherit;
+    color: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--clash-1);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--clash-1);
+    color: #fff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg-2);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--ink);
+    border: 3px solid var(--bg-2);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--accent);
+  }
+}
+
+@layer components {
+  /* 硬边面板：2px 实线 + 偏移硬阴影 */
+  .mv-panel {
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: var(--shadow-hard);
+  }
+
+  .mv-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .mv-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 2px solid var(--line);
+    background: var(--panel);
+    padding: 0.5rem 0.85rem;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition:
+      transform 0.08s ease,
+      background 0.12s ease,
+      color 0.12s ease;
+  }
+  .mv-btn:hover:not(:disabled) {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .mv-btn:active:not(:disabled) {
+    transform: translate(2px, 2px);
+  }
+  .mv-btn[data-on='true'] {
+    background: var(--accent);
+    color: var(--on-accent);
+    border-color: var(--line);
+  }
+  .mv-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* 撞色实心块 */
+  .mv-solid {
+    background: var(--accent);
+    color: var(--on-accent);
+    border: 2px solid var(--line);
+    box-shadow: var(--shadow-clash);
+  }
+
+  .mv-hazard {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--clash-1) 0 10px,
+      transparent 10px 20px
+    );
+    background-size: 28.28px 28.28px;
+    animation: mv-march 1.1s linear infinite;
+  }
+
+  .mv-grid {
+    background-image:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .mv-noise::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.22;
+    mix-blend-mode: var(--noise-blend);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  }
+}
+
+/* 跑马灯 */
+@utility mv-marquee-track {
+  display: inline-flex;
+  flex-wrap: nowrap;
+  animation: mv-marquee 34s linear infinite;
+  will-change: transform;
+}
+
+@keyframes mv-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes mv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mv-eq {
+  from {
+    transform: scaleY(0.25);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes mv-march {
+  to {
+    background-position: 28.28px 0;
+  }
+}
+
+@keyframes mv-drift {
+  from {
+    background-position:
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      28px 28px,
+      28px 28px;
+  }
+}
+
+@keyframes mv-letter {
+  from {
+    opacity: 0;
+    transform: translateY(-0.5em) rotate(6deg);
+  }
+}
+
+@keyframes mv-rule {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes mv-pop-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.7) rotate(-8deg);
+  }
+  70% {
+    transform: scale(1.06) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer utilities {
+  /* 唱片封套：hover 时内页从封套里滑出来，露出带编号的书脊 */
+  .mv-sleeve {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .mv-sleeve > .mv-sleeve-art {
+    transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .mv-sleeve:hover > .mv-sleeve-art,
+  .mv-sleeve:focus-within > .mv-sleeve-art {
+    transform: translateX(22%) rotate(-1.5deg);
+  }
+  .mv-sleeve::before {
+    content: attr(data-spine);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    display: grid;
+    place-items: center;
+    width: 34%;
+    height: 100%;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    writing-mode: vertical-rl;
+  }
+
+  /* 网格底缓慢漂移 */
+  .mv-grid-drift {
+    animation: mv-drift 24s linear infinite;
+  }
+
+  /* 大标题逐字落下 */
+  .mv-letter {
+    display: inline-block;
+    animation: mv-letter 0.5s var(--d, 0ms) cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  }
+
+  /* 分割线从左往右画出 */
+  .mv-rule {
+    transform-origin: left center;
+    animation: mv-rule 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .mv-pop-in {
+    animation: mv-pop-in 0.5s var(--d, 0ms) both;
+  }
+
+  /* 3D 倾斜卡片：--rx/--ry 由 JS 写入 */
+  .mv-tilt {
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+    transition:
+      transform 0.18s ease-out,
+      box-shadow 0.18s ease-out;
+    will-change: transform;
+  }
+  .mv-tilt:hover {
+    box-shadow: 14px 14px 0 var(--clash-1);
+  }
+}
+
+@keyframes mv-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes mv-block-in {
+  from {
+    opacity: 0;
+    transform: translateX(-26px) skewX(-7deg);
+  }
+}
+
+@keyframes mv-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.88) translateY(12px);
+  }
+}
+
+@keyframes mv-shine {
+  from {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  to {
+    transform: translateX(320%) skewX(-18deg);
+  }
+}
+
+@layer utilities {
+  /* 路由切换进场 */
+  .mv-page {
+    animation: mv-page-in 0.34s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  /* 滚动进入视口时逐格揭示，--d 控制错峰延迟 */
+  .mv-reveal {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .mv-reveal[data-in='1'] {
+    animation: mv-rise 0.5s var(--d, 0ms) cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+
+  .mv-block {
+    animation: mv-block-in 0.6s var(--d, 0ms) cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .mv-pop {
+    animation: mv-pop 0.45s var(--d, 0ms) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* 硬边卡片抬起：位移 + 阴影同步加深 */
+  .mv-lift {
+    transition:
+      transform 0.14s ease,
+      box-shadow 0.14s ease;
+  }
+  .mv-lift:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 9px 9px 0 var(--ink);
+  }
+
+  /* 播放中的高光扫过 */
+  .mv-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .mv-shine::after {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    width: 28%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+    animation: mv-shine 2.6s ease-in-out infinite;
+  }
+
+  .mv-ticker:hover .mv-marquee-track {
+    animation-play-state: paused;
+  }
+}
+
+/*
+ * 动效分级：<html data-motion> 由 JS 决定，用户可显式覆盖系统设置。
+ *   full —— 全开
+ *   calm —— 只停「大幅位移 / 自动滚动 / 持续旋转」这类会引发前庭不适的；
+ *            小纹理（斜纹行走）、状态灯、短过渡一律保留
+ *   off  —— 静态，但必须保证元素停在可见终态
+ * 默认跟随 prefers-reduced-motion，见 src/state/player.ts。
+ */
+
+/* 大幅位移与自动滚动：calm 下停 */
+[data-motion='calm'] .mv-marquee-track,
+[data-motion='calm'] .tty-sweep,
+[data-motion='calm'] .tty-art::after {
+  animation: none !important;
+}
+
+/* 极慢的背景纹理漂移与按钮高光：位移幅度小，calm 下保留 */
+
+/* 3D 倾斜是跟随指针的大角度旋转，calm 下直接不转 */
+[data-motion='calm'] .mv-tilt {
+  transform: none !important;
+}
+
+/* 入场位移压成极短，只留透明度变化 */
+[data-motion='calm'] .mv-page,
+[data-motion='calm'] .mv-block,
+[data-motion='calm'] .mv-reveal[data-in='1'],
+[data-motion='calm'] .mv-pop-in,
+[data-motion='calm'] .mv-rule {
+  animation-duration: 0.12s !important;
+}
+
+[data-motion='calm'] .mv-sleeve > .mv-sleeve-art {
+  transition-duration: 0.12s !important;
+}
+
+[data-motion='calm'] .mv-sleeve:hover > .mv-sleeve-art,
+[data-motion='calm'] .mv-sleeve:focus-within > .mv-sleeve-art {
+  transform: none;
+}
+
+[data-motion='off'] *,
+[data-motion='off'] *::before,
+[data-motion='off'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+/* 关掉动效时，入场类元素必须停在可见终态而不是 opacity:0 */
+[data-motion='off'] .mv-reveal {
+  opacity: 1;
+  transform: none;
+}

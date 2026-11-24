@@ -1,0 +1,362 @@
+/* 终端 / CRT 视觉系统：只服务于沉浸式播放器部件
+   全部放进 components 层，好让 Tailwind 工具类仍能覆盖 */
+
+@layer components {
+  .tty-screen {
+    /* 不要在这里写 position：它会盖掉工具类的 fixed，
+       让整块终端退回普通流、底部被视口裁掉。fixed 本身就是绝对子元素的包含块。 */
+    background: radial-gradient(120% 90% at 50% 0%, var(--tty-bg-2) 0%, var(--tty-bg) 62%) fixed;
+    color: var(--tty-fg);
+    font-family: var(--font-mono);
+    text-shadow: 0 0 6px var(--tty-glow);
+    overflow: hidden;
+    animation: tty-poweron 0.62s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  }
+
+  /* 扫描线：缓慢向下漂移，比静止版本更像真管子 */
+  .tty-screen::before {
+    content: '';
+    position: absolute;
+    inset: -2px 0 0 0;
+    height: calc(100% + 4px);
+    pointer-events: none;
+    z-index: 30;
+    background: repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0 1px, transparent 1px 3px);
+    opacity: 0.5;
+    animation: tty-scan 9s linear infinite;
+  }
+
+  /* 暗角 + 偶发闪烁 */
+  .tty-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 31;
+    background:
+      radial-gradient(120% 120% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.5) 100%),
+      linear-gradient(90deg, rgba(255, 0, 110, 0.05), transparent 35%, rgba(0, 200, 255, 0.05));
+    animation: tty-flicker 7s steps(40) infinite;
+  }
+
+  /* 一条从上往下扫的高亮带 */
+  .tty-sweep {
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 90px;
+    z-index: 29;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent, var(--tty-glow), transparent);
+    opacity: 0.5;
+    animation: tty-sweep 5.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  /* 面板：1px 描边 + 四角刻度 */
+  .tty-panel {
+    position: relative;
+    border: 1px solid currentcolor;
+    background: color-mix(in oklab, var(--tty-bg) 65%, transparent);
+    transition: border-color 0.2s ease;
+  }
+  .tty-panel::before,
+  .tty-panel::after {
+    content: '';
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--tty-cyan);
+    opacity: 0.85;
+  }
+  .tty-panel::before {
+    top: -1px;
+    left: -1px;
+    border-right: 0;
+    border-bottom: 0;
+  }
+  .tty-panel::after {
+    right: -1px;
+    bottom: -1px;
+    border-left: 0;
+    border-top: 0;
+  }
+  .tty-panel:hover {
+    border-color: var(--tty-cyan);
+  }
+
+  .tty-bar {
+    letter-spacing: -0.06em;
+    white-space: pre;
+  }
+
+  .tty-dim {
+    color: var(--tty-dim);
+    text-shadow: none;
+  }
+  .tty-amber {
+    color: var(--tty-amber);
+  }
+  .tty-cyan {
+    color: var(--tty-cyan);
+  }
+  .tty-magenta {
+    color: var(--tty-magenta);
+  }
+  .tty-violet {
+    color: var(--tty-violet);
+  }
+
+  /* 状态灯 */
+  .tty-led {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--tty-fg);
+    box-shadow: 0 0 8px var(--tty-glow);
+    animation: tty-led 1.6s ease-in-out infinite;
+  }
+  .tty-led--idle {
+    background: var(--tty-dim);
+    box-shadow: none;
+    animation: none;
+  }
+  .tty-led--warn {
+    background: var(--tty-magenta);
+    box-shadow: 0 0 8px var(--tty-magenta);
+  }
+
+  /* 歌词行 */
+  .tty-row-hi {
+    background: var(--tty-fg);
+    color: var(--tty-bg);
+    text-shadow: none;
+    animation: tty-slide-in 0.28s ease-out both;
+  }
+  .tty-line-past {
+    opacity: 0.42;
+  }
+  .tty-line-future {
+    opacity: 0.82;
+  }
+  /* 紧跟着的下一句：提亮但加左边距标记，眼睛能提前一句做准备 */
+  .tty-line-next {
+    opacity: 1;
+    color: var(--tty-cyan);
+    box-shadow: inset 2px 0 0 0 color-mix(in oklab, var(--tty-cyan) 55%, transparent);
+  }
+
+  /* 走带标题 */
+  .tty-marquee {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .tty-marquee > span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: tty-marquee 22s linear infinite;
+  }
+
+  /* ASCII 唱片 */
+  /* ASCII 点阵封面：叠一条缓慢下移的扫描亮线 */
+  .tty-art {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid currentcolor;
+  }
+  .tty-art::after {
+    content: '';
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 34%;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent, var(--tty-glow), transparent);
+    opacity: 0.55;
+    animation: tty-art-scan 4.2s ease-in-out infinite;
+  }
+}
+
+@keyframes tty-art-scan {
+  0%,
+  100% {
+    transform: translateY(-110%);
+  }
+  50% {
+    transform: translateY(300%);
+  }
+}
+
+/* EQ 推子非 0 时电平条轻微脉动，表示这一路在工作 */
+.tty-eq-live {
+  animation: tty-eq-live 1.6s ease-in-out infinite;
+}
+
+@keyframes tty-eq-live {
+  0%,
+  100% {
+    opacity: 1;
+    letter-spacing: -0.06em;
+  }
+  50% {
+    opacity: 0.72;
+  }
+}
+
+/* 播放时整块轻微呼吸 */
+.tty-breathe {
+  animation: tty-breathe 3.4s ease-in-out infinite;
+}
+
+/* 切曲时的字符抖动 */
+.tty-scramble {
+  position: relative;
+  display: inline-block;
+}
+.tty-scramble[data-glitch='1'] {
+  animation: tty-jitter 0.32s steps(2) 1;
+}
+
+@keyframes tty-poweron {
+  0% {
+    opacity: 0;
+    transform: scaleY(0.004) scaleX(0.6);
+    filter: brightness(6);
+  }
+  38% {
+    opacity: 1;
+    transform: scaleY(0.02) scaleX(1);
+    filter: brightness(2.4);
+  }
+  62% {
+    transform: scaleY(1) scaleX(1);
+    filter: brightness(1.5);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes tty-scan {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(3px);
+  }
+}
+
+@keyframes tty-sweep {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateY(105vh);
+    opacity: 0;
+  }
+}
+
+@keyframes tty-flicker {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.93;
+  }
+  95% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0.96;
+  }
+}
+
+@keyframes tty-led {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@keyframes tty-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.tty-caret {
+  display: inline-block;
+  width: 0.6em;
+  height: 1.05em;
+  translate: 0 0.14em;
+  background: currentcolor;
+  animation: tty-blink 1.05s steps(1) infinite;
+}
+
+@keyframes tty-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes tty-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes tty-breathe {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.22);
+  }
+}
+
+@keyframes tty-jitter {
+  0% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+  }
+  25% {
+    transform: translate(-2px, 1px);
+    clip-path: inset(10% 0 60% 0);
+  }
+  50% {
+    transform: translate(2px, -1px);
+    clip-path: inset(55% 0 12% 0);
+  }
+  75% {
+    transform: translate(-1px, 0);
+    clip-path: inset(30% 0 40% 0);
+  }
+  100% {
+    transform: none;
+    clip-path: inset(0 0 0 0);
+  }
+}

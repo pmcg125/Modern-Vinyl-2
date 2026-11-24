@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.cache/
+*.log
+.DS_Store
+.env
+.vite/
+coverage/
+
+# 曲库音频（体积大、含版权内容，不入库）
+music/*
+!music/.gitkeep
+
+# 本地工作记录
+.workbuddy/

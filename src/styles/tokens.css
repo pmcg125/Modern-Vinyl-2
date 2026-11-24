@@ -1,0 +1,92 @@
+/* ModernVinyl2 设计令牌：明=蓝白撞色 / 暗=绿黑撞色，全部直角 */
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-panel: var(--panel);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-on-accent: var(--on-accent);
+  --color-clash-1: var(--clash-1);
+  --color-clash-2: var(--clash-2);
+  --color-clash-3: var(--clash-3);
+
+  --font-display: 'Archivo Black', 'Chakra Petch', var(--cjk);
+  --font-ui: 'Chakra Petch', var(--cjk);
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, var(--cjk);
+
+  --shadow-hard-sm: 3px 3px 0 var(--ink);
+  --shadow-hard: 6px 6px 0 var(--ink);
+  --shadow-hard-lg: 12px 12px 0 var(--ink);
+  --shadow-clash: 6px 6px 0 var(--clash-1);
+  --shadow-accent: 6px 6px 0 var(--accent);
+
+  --radius-none: 0px;
+}
+
+:root {
+  --cjk: 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  color-scheme: dark;
+
+  /* 暗色：绿黑 */
+  --bg: #050706;
+  --bg-2: #0a0e0c;
+  --panel: #0d1310;
+  --ink: #e6ffee;
+  /* 原来的 #5f7d6c 对 --bg 只有 4.49:1，正好卡在 AA 门槛下；提亮一档到 5.3:1 */
+  --muted: #6a8a77;
+  --line: #1d5c39;
+  --accent: #00ff6a;
+  --accent-dim: #064d27;
+  --on-accent: #02180c;
+  --clash-1: #ff2e93;
+  --clash-2: #d7ff00;
+  --clash-3: #00e5ff;
+
+  --tty-bg: #03110a;
+  --tty-bg-2: #061c11;
+  --tty-fg: #00ff6a;
+  --tty-dim: #0a7a3a;
+  --tty-glow: rgba(0, 255, 106, 0.35);
+  /* 终端彩色磷光：琥珀=数据峰值，青色=缓冲/波形，洋红=警告与强调 */
+  --tty-amber: #ffc447;
+  --tty-cyan: #4de2ff;
+  --tty-magenta: #ff4da6;
+  --tty-violet: #b388ff;
+  --grid-line: rgba(29, 92, 57, 0.4);
+  --noise-blend: overlay;
+}
+
+[data-theme='light'] {
+  color-scheme: light;
+
+  /* 亮色：蓝白 */
+  --bg: #f1f0ea;
+  --bg-2: #ffffff;
+  --panel: #ffffff;
+  --ink: #07080a;
+  /* 同上：亮色下 #6a7080 只有 4.37:1，压深到 5.1:1 */
+  --muted: #5f6574;
+  --line: #07080a;
+  --accent: #0f3dff;
+  --accent-dim: #c9d6ff;
+  --on-accent: #ffffff;
+  --clash-1: #ff2e93;
+  --clash-2: #d8ff00;
+  --clash-3: #00bcd4;
+
+  --tty-bg: #eff3ff;
+  --tty-bg-2: #e2e9ff;
+  --tty-fg: #0f3dff;
+  --tty-dim: #7d94e0;
+  --tty-glow: rgba(15, 61, 255, 0.18);
+  --tty-amber: #a35a00;
+  --tty-cyan: #00707d;
+  --tty-magenta: #d4006a;
+  --tty-violet: #5b21b6;
+  --grid-line: rgba(7, 8, 10, 0.09);
+  --noise-blend: multiply;
+}
